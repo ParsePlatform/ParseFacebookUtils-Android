@@ -141,8 +141,10 @@ import bolts.Task;
 
   public void setAuthData(Map<String, String> authData, boolean isFacebookLoginScopeExternallyManaged)
       throws java.text.ParseException {
-    if (authData == null && !isFacebookLoginScopeExternallyManaged) {
-      facebookSdkDelegate.getLoginManager().logOut();
+    if (authData == null) {
+      if (!isFacebookLoginScopeExternallyManaged) {
+        facebookSdkDelegate.getLoginManager().logOut();
+      }
       return;
     }
 

@@ -104,12 +104,12 @@ public class FacebookControllerTest {
   @Test
   public void testSetAuthDataWithNullNotExternallyManaged() throws java.text.ParseException {
     FacebookController.FacebookSdkDelegate facebookSdk =
-        mock(FacebookController.FacebookSdkDelegate.class);
+            mock(FacebookController.FacebookSdkDelegate.class);
     LoginManager loginManager = mock(LoginManager.class);
     when(facebookSdk.getLoginManager()).thenReturn(loginManager);
     FacebookController controller = new FacebookController(facebookSdk);
 
-    controller.setAuthData(null, true);
+    controller.setAuthData(null, false);
     verify(facebookSdk).getLoginManager();
     verifyNoMoreInteractions(facebookSdk);
     verify(loginManager).logOut();
@@ -120,14 +120,10 @@ public class FacebookControllerTest {
   public void testSetAuthDataWithNullExternallyManaged() throws java.text.ParseException {
     FacebookController.FacebookSdkDelegate facebookSdk =
             mock(FacebookController.FacebookSdkDelegate.class);
-    LoginManager loginManager = mock(LoginManager.class);
-    when(facebookSdk.getLoginManager()).thenReturn(loginManager);
     FacebookController controller = new FacebookController(facebookSdk);
 
-    controller.setAuthData(null, false);
-    verify(facebookSdk).getLoginManager();
+    controller.setAuthData(null, true);
     verifyNoMoreInteractions(facebookSdk);
-    verifyNoMoreInteractions(loginManager);
   }
 
   @Test
