@@ -71,6 +71,7 @@ public final class ParseFacebookUtils {
 
   private static final Object lock = new Object();
   /* package for tests */ static boolean isInitialized;
+  /* package for tests */ static boolean isFacebookLoginScopeExternallyManaged = false;
   /* package for tests */ static FacebookController controller;
   /* package for tests */ static ParseUserDelegate userDelegate = new ParseUserDelegateImpl();
 
@@ -111,7 +112,7 @@ public final class ParseFacebookUtils {
         @Override
         public boolean onRestore(Map<String, String> authData) {
           try {
-            getController().setAuthData(authData);
+            getController().setAuthData(authData, isFacebookLoginScopeExternallyManaged);
             return true;
           } catch (Exception e) {
             return false;
@@ -167,6 +168,7 @@ public final class ParseFacebookUtils {
    * @return A task that will be resolved when logging in is complete.
    */
   public static Task<ParseUser> logInInBackground(AccessToken accessToken) {
+    isFacebookLoginScopeExternallyManaged = true;
     checkInitialization();
     return userDelegate.logInWithInBackground(AUTH_TYPE, getController().getAuthData(accessToken));
   }
@@ -180,6 +182,7 @@ public final class ParseFacebookUtils {
    * @return A task that will be resolved when logging in is complete.
    */
   public static Task<ParseUser> logInInBackground(AccessToken accessToken, LogInCallback callback) {
+    isFacebookLoginScopeExternallyManaged = true;
     return callbackOnMainThreadAsync(logInInBackground(accessToken), callback, true);
   }
 
