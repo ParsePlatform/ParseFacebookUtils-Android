@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyMapOf;
@@ -102,7 +103,7 @@ public class ParseFacebookUtilsTest {
     Map<String, String> authData = new HashMap<>();
 
     assertTrue(callback.onRestore(authData));
-    verify(controller).setAuthData(authData);
+    verify(controller).setAuthData(authData, true);
   }
 
   @Test
@@ -115,10 +116,10 @@ public class ParseFacebookUtilsTest {
     Map<String, String> authData = new HashMap<>();
     doThrow(new RuntimeException())
         .when(controller)
-        .setAuthData(anyMapOf(String.class, String.class));
+        .setAuthData(anyMapOf(String.class, String.class), anyBoolean());
 
     assertFalse(callback.onRestore(authData));
-    verify(controller).setAuthData(authData);
+    verify(controller).setAuthData(authData, false);
   }
 
   //endregion

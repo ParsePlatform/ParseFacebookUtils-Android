@@ -102,18 +102,28 @@ public class FacebookControllerTest {
   //region testSetAuthData
 
   @Test
-  public void testSetAuthDataWithNull() throws java.text.ParseException {
+  public void testSetAuthDataWithNullNotExternallyManaged() throws java.text.ParseException {
     FacebookController.FacebookSdkDelegate facebookSdk =
-        mock(FacebookController.FacebookSdkDelegate.class);
+            mock(FacebookController.FacebookSdkDelegate.class);
     LoginManager loginManager = mock(LoginManager.class);
     when(facebookSdk.getLoginManager()).thenReturn(loginManager);
     FacebookController controller = new FacebookController(facebookSdk);
 
-    controller.setAuthData(null);
+    controller.setAuthData(null, false);
     verify(facebookSdk).getLoginManager();
     verifyNoMoreInteractions(facebookSdk);
     verify(loginManager).logOut();
     verifyNoMoreInteractions(loginManager);
+  }
+
+  @Test
+  public void testSetAuthDataWithNullExternallyManaged() throws java.text.ParseException {
+    FacebookController.FacebookSdkDelegate facebookSdk =
+            mock(FacebookController.FacebookSdkDelegate.class);
+    FacebookController controller = new FacebookController(facebookSdk);
+
+    controller.setAuthData(null, true);
+    verifyNoMoreInteractions(facebookSdk);
   }
 
   @Test
@@ -130,7 +140,7 @@ public class FacebookControllerTest {
     authData.put("id", "test_id");
     authData.put("access_token", "test_token");
     authData.put("expiration_date", "2015-07-03T07:00:00.000Z");
-    controller.setAuthData(authData);
+    controller.setAuthData(authData, true);
     ArgumentCaptor<AccessToken> accessTokenCapture = ArgumentCaptor.forClass(AccessToken.class);
     verify(facebookSdk).setCurrentAccessToken(accessTokenCapture.capture());
     AccessToken accessToken = accessTokenCapture.getValue();
@@ -153,13 +163,13 @@ public class FacebookControllerTest {
     authData.put("id", "new_id");
     authData.put("access_token", "test_token");
     authData.put("expiration_date", "2015-07-03T07:00:00.000Z");
-    controller.setAuthData(authData);
+    controller.setAuthData(authData, true);
     verify(facebookSdk, times(1)).setCurrentAccessToken(any(AccessToken.class));
 
     authData.put("id", "new_id");
     authData.put("access_token", "new_token");
     authData.put("expiration_date", "2015-07-03T07:00:00.000Z");
-    controller.setAuthData(authData);
+    controller.setAuthData(authData, true);
     verify(facebookSdk, times(2)).setCurrentAccessToken(any(AccessToken.class));
   }
 
@@ -175,7 +185,7 @@ public class FacebookControllerTest {
     authData.put("id", "test_id");
     authData.put("access_token", "test_token");
     authData.put("expiration_date", "2015-07-03T07:00:00.000Z");
-    controller.setAuthData(authData);
+    controller.setAuthData(authData, true);
     verify(facebookSdk, never()).setCurrentAccessToken(any(AccessToken.class));
   }
 
